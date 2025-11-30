@@ -1,0 +1,3226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindmap</title>
+    <style>
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Ultralight.otf') format('opentype');
+            font-weight: 100;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Thin.otf') format('opentype');
+            font-weight: 200;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Light.otf') format('opentype');
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Semibold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Heavy.otf') format('opentype');
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Text';
+            src: url('/mnt/user-data/uploads/SF-Pro-Text-Black.otf') format('opentype');
+            font-weight: 900;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro';
+            src: url('/mnt/user-data/uploads/SF-Pro.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f5f5f5;
+            --text-primary: #0a0a0a;
+            --text-secondary: #737373;
+            --border-color: #e5e5e5;
+            --accent: #737373;
+            --accent-hover: #525252;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark-mode {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #171717;
+            --bg-tertiary: #262626;
+            --text-primary: #fafafa;
+            --text-secondary: #a3a3a3;
+            --border-color: #404040;
+            --accent: #a3a3a3;
+            --accent-hover: #d4d4d4;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-260px);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .collapse-sidebar-btn {
+            padding: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .collapse-sidebar-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .expand-sidebar-btn {
+            position: fixed;
+            left: 16px;
+            top: 24px;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            z-index: 150;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expand-sidebar-btn.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .expand-sidebar-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .add-page-btn {
+            flex: 1;
+            padding: 9px 16px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .add-page-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .page-item {
+            padding: 10px 16px;
+            margin-bottom: 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            group: relative;
+        }
+
+        .page-item.nested {
+            padding-left: 32px;
+            font-size: 13px;
+            color: #a3a3a3;
+        }
+
+        .page-item.nested::before {
+            content: '↳';
+            position: absolute;
+            left: 16px;
+            color: #a3a3a3;
+        }
+
+        .page-item.nested .page-name {
+            color: #a3a3a3;
+        }
+
+        .page-item.nested .edit-btn {
+            color: #a3a3a3;
+        }
+
+        .page-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .page-item.active {
+            background: var(--bg-primary);
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            padding: 9px 15px;
+        }
+
+        .page-name {
+            flex: 1;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .page-name-input {
+            flex: 1;
+            font-size: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            padding: 4px 8px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .edit-btn {
+            opacity: 0;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .page-item:hover .edit-btn {
+            opacity: 1;
+        }
+
+        .edit-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .delete-btn {
+            color: #ef4444;
+        }
+
+        .delete-btn:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-secondary);
+            margin-left: 0;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed ~ .canvas-area {
+            margin-left: -260px;
+        }
+
+        .canvas-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 32px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(255,255,255,0) 100%);
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-page-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .save-btn {
+            pointer-events: all;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .save-btn:hover {
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .save-btn.saved {
+            background: #e0e0e0;
+            border-color: #9e9e9e;
+        }
+
+        .save-btn.saved svg {
+            stroke: #616161;
+        }
+
+        .undo-btn {
+            pointer-events: all;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .undo-btn:hover {
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .undo-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            position: relative;
+        }
+
+        .canvas.grabbing {
+            cursor: grabbing;
+        }
+
+        .canvas-content {
+            position: absolute;
+            width: 4000px;
+            height: 4000px;
+            transform-origin: 0 0;
+        }
+
+        /* Mind Map Bubbles */
+        .bubble {
+            position: absolute;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: move;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            min-width: 160px;
+            max-width: 280px;
+        }
+
+        .bubble:hover {
+            border-color: var(--text-secondary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        /* Colored bubbles should have no border */
+        .bubble[style*="background: linear-gradient"],
+        .bubble[style*="background: #"] {
+            border: none;
+        }
+
+        /* Bubble color classes - 12 modern colors with vertical gradients */
+        
+        /* Magenta/Purple tones */
+        .bubble.bubble-color-purple-1 { background: linear-gradient(180deg, rgba(217, 70, 239, 0.9) 0%, rgba(217, 70, 239, 0.3) 100%); border: none; }
+        .bubble.bubble-color-purple-2 { background: linear-gradient(180deg, rgba(196, 181, 253, 0.9) 0%, rgba(196, 181, 253, 0.3) 100%); border: none; }
+        
+        /* Pink tones */
+        .bubble.bubble-color-pink-1 { background: linear-gradient(180deg, rgba(244, 114, 182, 0.9) 0%, rgba(244, 114, 182, 0.3) 100%); border: none; }
+        .bubble.bubble-color-pink-2 { background: linear-gradient(180deg, rgba(251, 207, 232, 0.9) 0%, rgba(251, 207, 232, 0.3) 100%); border: none; }
+        
+        /* Coral/Red tones */
+        .bubble.bubble-color-coral-1 { background: linear-gradient(180deg, rgba(255, 107, 107, 0.9) 0%, rgba(255, 107, 107, 0.3) 100%); border: none; }
+        .bubble.bubble-color-coral-2 { background: linear-gradient(180deg, rgba(251, 146, 60, 0.9) 0%, rgba(251, 146, 60, 0.3) 100%); border: none; }
+        
+        /* Amber/Lime tones */
+        .bubble.bubble-color-orange-1 { background: linear-gradient(180deg, rgba(251, 191, 36, 0.9) 0%, rgba(251, 191, 36, 0.3) 100%); border: none; }
+        .bubble.bubble-color-orange-2 { background: linear-gradient(180deg, rgba(163, 230, 53, 0.9) 0%, rgba(163, 230, 53, 0.3) 100%); border: none; }
+        
+        /* Cyan/Teal tones */
+        .bubble.bubble-color-orange-3 { background: linear-gradient(180deg, rgba(34, 211, 238, 0.9) 0%, rgba(34, 211, 238, 0.3) 100%); border: none; }
+        .bubble.bubble-color-purple-3 { background: linear-gradient(180deg, rgba(45, 212, 191, 0.9) 0%, rgba(45, 212, 191, 0.3) 100%); border: none; }
+        
+        /* Grey tones */
+        .bubble.bubble-color-pink-3 { background: linear-gradient(180deg, rgba(203, 213, 225, 0.9) 0%, rgba(203, 213, 225, 0.3) 100%); border: none; }
+        .bubble.bubble-color-coral-3 { background: linear-gradient(180deg, rgba(100, 116, 139, 0.9) 0%, rgba(100, 116, 139, 0.3) 100%); border: none; }
+
+        /* No bubble style - text only */
+        .bubble.no-bubble-style {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 8px !important;
+            max-width: 400px;
+        }
+
+        .bubble.no-bubble-style .connection-point {
+            display: none;
+        }
+
+        .bubble.no-bubble-style .bubble-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .bubble.no-bubble-style .bubble-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .bubble.no-bubble-style .bubble-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        /* Dark mode: Make default bubbles dark with white text */
+        body.dark-mode .bubble:not([class*="bubble-color-"]) {
+            background: #262626 !important;
+            border-color: #404040 !important;
+        }
+
+        body.dark-mode .bubble:not([class*="bubble-color-"]) .bubble-title,
+        body.dark-mode .bubble:not([class*="bubble-color-"]) .bubble-subtitle,
+        body.dark-mode .bubble:not([class*="bubble-color-"]) .bubble-content {
+            color: #fafafa !important;
+        }
+
+        .bubble.expanded {
+            max-width: 900px;
+            min-height: 500px;
+            background: var(--bg-secondary);
+            border-color: var(--text-secondary);
+            box-shadow: var(--shadow-lg);
+            z-index: 50;
+            cursor: move;
+            padding: 40px 56px;
+            aspect-ratio: 16 / 10;
+        }
+
+        .bubble.dragging {
+            cursor: grabbing !important;
+        }
+
+        .bubble * {
+            cursor: inherit;
+        }
+
+        .bubble [contenteditable="true"] {
+            cursor: text;
+        }
+
+        .bubble .format-btn {
+            cursor: pointer;
+        }
+
+        .bubble-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 0;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .bubble.expanded .bubble-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+        }
+
+        .bubble-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .bubble.expanded .bubble-subtitle {
+            font-size: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .bubble-content {
+            display: none;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-top: 0;
+            min-height: 250px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .bubble.expanded .bubble-content {
+            display: block;
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.8;
+            letter-spacing: -0.01em;
+            margin-bottom: 32px;
+        }
+
+        /* Text formatting in bubble content */
+        .bubble-content strong,
+        .bubble-content b {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .bubble-content em,
+        .bubble-content i {
+            font-style: italic;
+        }
+
+        .bubble-content p {
+            margin-bottom: 1em;
+        }
+
+        .bubble-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bubble-edit-btn {
+            display: none;
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .bubble.expanded .bubble-edit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bubble-edit-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            opacity: 1;
+        }
+
+        .bubble-edit-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Modal for creating/editing bubbles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 0;
+            box-shadow: var(--shadow-lg);
+            width: 95%;
+            max-width: 1200px;
+            max-height: 95vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: -0.01em;
+        }
+
+        .modal-body {
+            padding: 0;
+            overflow-y: auto;
+            flex: 1;
+            background: white;
+        }
+
+        .document-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 120px;
+            min-height: 100%;
+            background: white;
+        }
+
+        .modal-field {
+            margin-bottom: 0;
+            border: none;
+        }
+
+        .modal-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-label {
+            display: none;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            font-size: 16px;
+            font-family: inherit;
+            background: transparent;
+            transition: none;
+            margin-bottom: 8px;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .modal-input#modalBubbleTitle {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .modal-input#modalBubbleSubtitle {
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+        }
+
+        .modal-input#modalBubbleTitle::placeholder,
+        .modal-input#modalBubbleSubtitle::placeholder {
+            color: #d1d1d6;
+        }
+
+        .modal-textarea {
+            min-height: 600px;
+            resize: none;
+            font-family: inherit;
+            line-height: 1.8;
+            padding: 0;
+            border: none;
+            font-size: 15px;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .modal-textarea::placeholder {
+            color: #d1d1d6;
+        }
+
+        /* Preview area for formatted text */
+        .content-preview {
+            min-height: 600px;
+            font-family: inherit;
+            line-height: 1.8;
+            font-size: 18px;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .content-preview strong,
+        .content-preview b {
+            font-weight: 700;
+        }
+
+        .content-preview em,
+        .content-preview i {
+            font-style: italic;
+        }
+
+        .content-preview p {
+            margin-bottom: 1em;
+        }
+
+        .content-preview p:last-child {
+            margin-bottom: 0;
+        }
+
+        .editable-content {
+            min-height: 600px;
+            font-family: inherit;
+            line-height: 1.8;
+            font-size: 15px;
+            color: var(--text-primary);
+            outline: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .editable-content:empty:before {
+            content: 'Start writing...';
+            color: #d1d1d6;
+        }
+
+        .editable-content strong,
+        .editable-content b {
+            font-weight: 700;
+        }
+
+        .editable-content em,
+        .editable-content i {
+            font-style: italic;
+        }
+
+        .formatting-toolbar-modal {
+            position: sticky;
+            top: 0;
+            display: flex;
+            gap: 4px;
+            padding: 8px 16px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+            margin: 0;
+        }
+
+        .format-btn-modal {
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .format-btn-modal:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .format-btn-modal.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Color picker in modal */
+        .color-picker-modal {
+            padding: 12px 32px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .color-picker-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            width: 100%;
+            margin-bottom: -8px;
+        }
+
+        .bubble-options {
+            padding: 12px 32px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .checkbox-label:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .checkbox-label {
+            background: var(--text-primary);
+            color: white;
+            border-color: var(--text-primary);
+        }
+
+        .checkbox-label svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .color-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            max-width: 150px;
+        }
+
+        .color-dot-modal {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .color-dot-modal:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .color-dot-modal.selected {
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .color-dot-modal.selected {
+            box-shadow: 0 0 0 2px #171717, 0 0 0 4px var(--accent);
+        }
+
+        /* 12 Modern Colors - Vertical gradients from opaque to translucent */
+        
+        /* Magenta/Purple tones */
+        .color-dot-modal.purple-1 { background: linear-gradient(180deg, rgba(217, 70, 239, 0.9) 0%, rgba(217, 70, 239, 0.3) 100%); }
+        .color-dot-modal.purple-2 { background: linear-gradient(180deg, rgba(196, 181, 253, 0.9) 0%, rgba(196, 181, 253, 0.3) 100%); }
+        
+        /* Pink tones */
+        .color-dot-modal.pink-1 { background: linear-gradient(180deg, rgba(244, 114, 182, 0.9) 0%, rgba(244, 114, 182, 0.3) 100%); }
+        .color-dot-modal.pink-2 { background: linear-gradient(180deg, rgba(251, 207, 232, 0.9) 0%, rgba(251, 207, 232, 0.3) 100%); }
+        
+        /* Coral/Red tones */
+        .color-dot-modal.coral-1 { background: linear-gradient(180deg, rgba(255, 107, 107, 0.9) 0%, rgba(255, 107, 107, 0.3) 100%); }
+        .color-dot-modal.coral-2 { background: linear-gradient(180deg, rgba(251, 146, 60, 0.9) 0%, rgba(251, 146, 60, 0.3) 100%); }
+        
+        /* Amber/Lime tones */
+        .color-dot-modal.orange-1 { background: linear-gradient(180deg, rgba(251, 191, 36, 0.9) 0%, rgba(251, 191, 36, 0.3) 100%); }
+        .color-dot-modal.orange-2 { background: linear-gradient(180deg, rgba(163, 230, 53, 0.9) 0%, rgba(163, 230, 53, 0.3) 100%); }
+        
+        /* Cyan/Teal tones */
+        .color-dot-modal.orange-3 { background: linear-gradient(180deg, rgba(34, 211, 238, 0.9) 0%, rgba(34, 211, 238, 0.3) 100%); }
+        .color-dot-modal.purple-3 { background: linear-gradient(180deg, rgba(45, 212, 191, 0.9) 0%, rgba(45, 212, 191, 0.3) 100%); }
+        
+        /* Grey tones */
+        .color-dot-modal.pink-3 { background: linear-gradient(180deg, rgba(203, 213, 225, 0.9) 0%, rgba(203, 213, 225, 0.3) 100%); }
+        .color-dot-modal.coral-3 { background: linear-gradient(180deg, rgba(100, 116, 139, 0.9) 0%, rgba(100, 116, 139, 0.3) 100%); }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            background: white;
+        }
+
+        .modal-footer-left {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-footer-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .modal-btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .canvas.connecting {
+            cursor: crosshair !important;
+        }
+
+        .canvas.connecting .bubble:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(115, 115, 115, 0.1);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            min-width: 180px;
+            display: none;
+        }
+
+        body.dark-mode .context-menu {
+            background: #262626;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .context-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 0;
+        }
+
+        /* Connection styling */
+        .connection-line {
+            stroke: var(--border-color);
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.6;
+            cursor: default;
+            transition: all 0.2s;
+            pointer-events: none;
+        }
+
+        body.line-mode-active .connection-line {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        body.line-mode-active .connection-line:hover {
+            stroke: var(--text-secondary);
+            stroke-width: 2.5;
+            opacity: 1;
+        }
+
+        .connection-line.selected {
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            opacity: 1;
+        }
+
+        /* Connection labels */
+        .connection-label {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            pointer-events: none;
+            cursor: default;
+            z-index: 30;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        body.line-mode-active .connection-label {
+            pointer-events: all;
+            cursor: pointer;
+        }
+
+        body.line-mode-active .connection-label:hover {
+            border-color: var(--text-secondary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .connection-label.empty {
+            display: none;
+        }
+
+        .connection-label-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 12px;
+            font-family: inherit;
+            padding: 0;
+            min-width: 60px;
+            max-width: 200px;
+        }
+
+        /* Connection points */
+        .connection-point {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--accent);
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: crosshair;
+            opacity: 0;
+            transition: all 0.2s;
+            z-index: 60;
+            pointer-events: none;
+        }
+
+        body.line-mode-active .connection-point {
+            pointer-events: all;
+            opacity: 0.8;
+        }
+
+        body.line-mode-active .connection-point:hover {
+            opacity: 1;
+            transform: scale(1.3);
+            box-shadow: 0 0 0 3px rgba(115, 115, 115, 0.2);
+        }
+
+        .connection-point.top {
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connection-point.bottom {
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connection-point.left {
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .connection-point.right {
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Bubble type indicator */
+        .bubble-type-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            padding: 3px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .bubble.type-flowchart .bubble-type-badge::before {
+            content: 'Flow';
+        }
+
+        .bubble.type-text .bubble-type-badge {
+            display: none;
+        }
+
+        /* Connection Lines */
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            stroke: var(--border-color);
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.6;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 6px;
+            z-index: 20;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .add-bubble-btn {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            padding: 12px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-bubble-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .line-mode-btn {
+            position: absolute;
+            bottom: 24px;
+            left: 80px;
+            padding: 12px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .line-mode-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-secondary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .line-mode-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Floating text elements */
+        .floating-text {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-family: inherit;
+            color: var(--text-primary);
+            cursor: move;
+            min-width: 120px;
+            max-width: 400px;
+            z-index: 25;
+            font-weight: 400;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
+        }
+
+        .floating-text:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .floating-text .text-content {
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .floating-text .connection-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: crosshair;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .floating-text .connection-point.top {
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .floating-text .connection-point.right {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .floating-text .connection-point.bottom {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .floating-text .connection-point.left {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .floating-text:hover .connection-point {
+            opacity: 1;
+        }
+
+        .floating-text .connection-point:hover {
+            background: var(--accent-hover);
+            transform: scale(1.2) translateX(-50%);
+        }
+
+        .floating-text .connection-point.top:hover,
+        .floating-text .connection-point.bottom:hover {
+            transform: scale(1.2) translateX(-50%);
+        }
+
+        .floating-text .connection-point.left:hover,
+        .floating-text .connection-point.right:hover {
+            transform: scale(1.2) translateY(-50%);
+        }
+
+        .floating-text.bold {
+            font-weight: 700;
+        }
+
+        /* Floating images */
+        .floating-image-container {
+            position: absolute;
+            z-index: 25;
+            cursor: move;
+        }
+
+        .floating-image {
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            max-width: 500px;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .floating-image-container:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .image-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 4px 0 8px 0;
+            cursor: nwse-resize;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: all;
+        }
+
+        .floating-image-container:hover .image-resize-handle {
+            opacity: 0.7;
+        }
+
+        .image-resize-handle:hover {
+            opacity: 1;
+        }
+
+        /* Line mode active state */
+        body.line-mode-active .bubble {
+            cursor: crosshair;
+        }
+
+        body.line-mode-active .connection-point {
+            opacity: 0.8;
+        }
+
+        /* Visual feedback for connection in progress */
+        body.line-mode-active.connecting .bubble {
+            opacity: 0.5;
+        }
+
+        body.line-mode-active.connecting .connection-point {
+            opacity: 1;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Scrollbar styling */
+        .pages-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pages-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .pages-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .pages-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .bubble {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Mobile Optimization - Apple Notes style */
+        @media (max-width: 768px) {
+            /* Sidebar adjustments */
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 200;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show-mobile {
+                transform: translateX(0);
+            }
+
+            .expand-sidebar-btn {
+                opacity: 1;
+                pointer-events: all;
+                left: 12px;
+                top: 12px;
+            }
+
+            /* Make buttons and controls larger for touch */
+            .control-btn,
+            .add-bubble-btn,
+            .page-item,
+            .add-page-btn {
+                min-height: 44px;
+                min-width: 44px;
+                font-size: 16px;
+            }
+
+            .bubble-edit-btn {
+                width: 36px;
+                height: 36px;
+                padding: 8px;
+            }
+
+            /* Modal full screen on mobile */
+            .modal {
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            /* Color picker adjustments */
+            .color-dot-modal {
+                width: 28px;
+                height: 28px;
+            }
+
+            .color-picker-grid {
+                max-width: 200px;
+            }
+
+            /* Checkbox label larger */
+            .checkbox-label {
+                width: 44px;
+                height: 44px;
+            }
+
+            /* Bubbles easier to tap */
+            .bubble {
+                min-width: 120px;
+                padding: 16px 20px;
+            }
+
+            .bubble-title {
+                font-size: 16px;
+            }
+
+            /* Connection points larger for touch */
+            .connection-point {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* Controls positioning - make visible and accessible */
+            .controls {
+                bottom: 20px;
+                right: 12px;
+                gap: 8px;
+                z-index: 100;
+            }
+
+            .add-bubble-btn {
+                bottom: 20px;
+                left: 12px;
+                z-index: 100;
+                padding: 10px 14px;
+                font-size: 15px;
+            }
+
+            .line-mode-btn {
+                bottom: 20px;
+                left: auto;
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 100;
+                padding: 10px 14px;
+                font-size: 15px;
+            }
+
+            .control-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+
+            /* Prevent text selection and zoom on double tap */
+            * {
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-touch-callout: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            input,
+            textarea,
+            [contenteditable] {
+                -webkit-user-select: text;
+                user-select: text;
+            }
+
+            /* Prevent pull-to-refresh */
+            body {
+                overscroll-behavior: none;
+            }
+
+            /* Smoother scrolling */
+            .pages-list,
+            .modal-body {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Touch-specific styles for all devices */
+        @media (hover: none) and (pointer: coarse) {
+            .control-btn:active,
+            .add-bubble-btn:active,
+            .modal-btn:active {
+                transform: scale(0.95);
+            }
+
+            /* Remove hover states on touch devices */
+            .bubble:hover {
+                transform: none;
+            }
+
+            .connection-point:hover {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Mind Maps</div>
+                <div class="sidebar-header-buttons">
+                    <button class="collapse-sidebar-btn" onclick="toggleSidebar()" title="Collapse sidebar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button class="add-page-btn" onclick="addPage()">+ New</button>
+                </div>
+            </div>
+            <div class="pages-list" id="pagesList">
+                <!-- Mind maps will be added here -->
+            </div>
+        </div>
+
+        <!-- Expand sidebar button (shown when collapsed) -->
+        <button class="expand-sidebar-btn" id="expandSidebarBtn" onclick="toggleSidebar()" title="Expand sidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+            <div class="canvas-header">
+                <div class="current-page-title" id="currentPageTitle">Untitled</div>
+                <div>
+                    <button class="undo-btn" id="undoBtn" onclick="undo()" disabled title="Undo">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v6h6"></path>
+                            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path>
+                        </svg>
+                    </button>
+                    <button class="save-btn" id="saveBtn" onclick="savePage()" title="Save">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas" id="canvas">
+                <div class="canvas-content" id="canvasContent">
+                    <svg class="connections" id="connections"></svg>
+                </div>
+            </div>
+
+            <button class="add-bubble-btn" onclick="openCreateBubbleModal()" title="Create Bubble">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            
+            
+            <button class="line-mode-btn" id="lineModeBtn" onclick="toggleLineMode()" title="Add Lines">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="5" cy="12" r="2"></circle>
+                    <circle cx="19" cy="12" r="2"></circle>
+                    <line x1="7" y1="12" x2="17" y2="12"></line>
+                </svg>
+            </button>
+
+            <div class="controls">
+                <button class="control-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button class="control-btn" onclick="zoomIn()" title="Zoom In">+</button>
+                <button class="control-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+                <button class="control-btn" onclick="resetView()" title="Reset View">⟲</button>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div class="context-menu" id="contextMenu">
+            <div class="context-menu-item" onclick="contextAction('edit')">Edit Text</div>
+            <div class="context-menu-separator"></div>
+            <div class="context-menu-item" onclick="contextAction('createNested')">Create Nested Mind Map</div>
+            <div class="context-menu-separator"></div>
+            <div class="context-menu-item" onclick="contextAction('delete')" style="color: #ef4444;">Delete</div>
+        </div>
+
+        <!-- Bubble Create/Edit Modal -->
+        <div class="modal-overlay" id="bubbleModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="modalTitle">Untitled Document</div>
+                    <div class="modal-footer-right">
+                        <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button class="modal-btn modal-btn-primary" id="modalSubmitBtn" onclick="submitBubbleModal()">Save</button>
+                    </div>
+                </div>
+                <div class="formatting-toolbar-modal">
+                    <button class="format-btn-modal" onclick="formatModalText('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                    <button class="format-btn-modal" onclick="formatModalText('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                </div>
+                <div class="color-picker-modal">
+                    <div class="color-picker-label">Color</div>
+                    <div class="color-picker-grid">
+                        <!-- Row 1: Magenta, Violet, Pink, Light Pink, Coral, Orange -->
+                        <div class="color-dot-modal purple-1" onclick="selectBubbleColor('purple-1')" title="Magenta"></div>
+                        <div class="color-dot-modal purple-2" onclick="selectBubbleColor('purple-2')" title="Violet"></div>
+                        <div class="color-dot-modal pink-1" onclick="selectBubbleColor('pink-1')" title="Pink"></div>
+                        <div class="color-dot-modal pink-2" onclick="selectBubbleColor('pink-2')" title="Light Pink"></div>
+                        <div class="color-dot-modal coral-1" onclick="selectBubbleColor('coral-1')" title="Coral"></div>
+                        <div class="color-dot-modal coral-2" onclick="selectBubbleColor('coral-2')" title="Orange"></div>
+                        
+                        <!-- Row 2: Amber, Lime, Cyan, Teal, Silver, Slate -->
+                        <div class="color-dot-modal orange-1" onclick="selectBubbleColor('orange-1')" title="Amber"></div>
+                        <div class="color-dot-modal orange-2" onclick="selectBubbleColor('orange-2')" title="Lime"></div>
+                        <div class="color-dot-modal orange-3" onclick="selectBubbleColor('orange-3')" title="Cyan"></div>
+                        <div class="color-dot-modal purple-3" onclick="selectBubbleColor('purple-3')" title="Teal"></div>
+                        <div class="color-dot-modal pink-3" onclick="selectBubbleColor('pink-3')" title="Silver"></div>
+                        <div class="color-dot-modal coral-3" onclick="selectBubbleColor('coral-3')" title="Slate"></div>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="noBubbleCheckbox" onchange="toggleNoBubble()">
+                        <label for="noBubbleCheckbox" class="checkbox-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="6" x2="20" y2="6"/>
+                                <line x1="12" y1="6" x2="12" y2="20"/>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="document-container">
+                        <div class="modal-field">
+                            <input type="text" class="modal-input" id="modalBubbleTitle" placeholder="Title">
+                        </div>
+                        <div class="modal-field">
+                            <input type="text" class="modal-input" id="modalBubbleSubtitle" placeholder="Subtitle">
+                        </div>
+                        <div class="modal-field">
+                            <div class="editable-content" id="modalBubbleContent" contenteditable="true"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Bubble Modal (No color picker, just text) -->
+    </div>
+
+    <script>
+        // State management
+        let pages = [];
+        let currentPageId = null;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let translateX = 0;
+        let translateY = 0;
+        let scale = 1;
+        let bubbleIdCounter = 0;
+        let contextMenuTarget = null;
+        let isConnecting = false;
+        let connectionStart = null;
+        let selectedConnection = null;
+        let modalMode = 'create'; // 'create' or 'edit'
+        let editingBubbleId = null;
+        let selectedConnectionIndex = null;
+        let isLineMode = false;
+        let defaultLineType = 'elbow'; // 'elbow' or 'straight'
+        let currentColorScheme = 'normal';
+        let undoHistory = [];
+        let maxUndoHistory = 20;
+        let selectedBubbleColor = null; // Color selected in modal
+
+        // Initialize
+        // Text bubble lock/unlock
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const expandBtn = document.getElementById('expandSidebarBtn');
+            
+            // Mobile-specific behavior
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show-mobile');
+                // Don't show expand button on mobile - it's always visible
+            } else {
+                // Desktop behavior
+                sidebar.classList.toggle('collapsed');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    expandBtn.classList.add('visible');
+                } else {
+                    expandBtn.classList.remove('visible');
+                }
+            }
+        }
+
+        function init() {
+            // Load dark mode preference
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Try to load from localStorage first
+            const loaded = loadFromStorage();
+            
+            if (!loaded) {
+                // Create first page if nothing was loaded
+                addPage();
+            } else {
+                // Switch to first page
+                currentPageId = pages[0].id;
+                renderPages();
+            }
+            
+            loadCanvas();
+            setupCanvasEvents();
+        }
+
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Undo functionality
+        function saveStateToHistory() {
+            const state = JSON.parse(JSON.stringify(pages));
+            undoHistory.push(state);
+            
+            // Limit history size
+            if (undoHistory.length > maxUndoHistory) {
+                undoHistory.shift();
+            }
+            
+            updateUndoButton();
+        }
+
+        function undo() {
+            if (undoHistory.length === 0) return;
+            
+            pages = undoHistory.pop();
+            updateUndoButton();
+            loadCanvas();
+            renderPages();
+            savePage();
+        }
+
+        function updateUndoButton() {
+            const undoBtn = document.getElementById('undoBtn');
+            undoBtn.disabled = undoHistory.length === 0;
+        }
+
+        // Manual color selection for bubbles
+        function selectBubbleColor(colorKey) {
+            // If clicking the same color, deselect it
+            if (selectedBubbleColor === colorKey) {
+                selectedBubbleColor = null;
+                document.querySelectorAll('.color-dot-modal').forEach(dot => {
+                    dot.classList.remove('selected');
+                });
+                return;
+            }
+            
+            selectedBubbleColor = colorKey;
+            
+            // Update UI to show selected color
+            document.querySelectorAll('.color-dot-modal').forEach(dot => {
+                dot.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function openCreateBubbleModal() {
+            modalMode = 'create';
+            editingBubbleId = null;
+            selectedBubbleColor = null;
+            
+            document.getElementById('modalTitle').textContent = 'Create Bubble';
+            document.getElementById('modalSubmitBtn').textContent = 'Save';
+            document.getElementById('modalBubbleTitle').value = '';
+            document.getElementById('modalBubbleSubtitle').value = '';
+            document.getElementById('modalBubbleContent').innerHTML = '';
+            document.getElementById('noBubbleCheckbox').checked = false;
+            
+            // Clear color selection
+            document.querySelectorAll('.color-dot-modal').forEach(dot => {
+                dot.classList.remove('selected');
+            });
+            
+            document.getElementById('bubbleModal').classList.add('active');
+            document.getElementById('modalBubbleTitle').focus();
+        }
+
+        function openEditBubbleModal(bubbleId) {
+            modalMode = 'edit';
+            editingBubbleId = bubbleId;
+            
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === bubbleId);
+            
+            if (!bubble) return;
+            
+            selectedBubbleColor = bubble.color || null;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Bubble';
+            document.getElementById('modalSubmitBtn').textContent = 'Update';
+            document.getElementById('modalBubbleTitle').value = bubble.title || '';
+            document.getElementById('modalBubbleSubtitle').value = bubble.subtitle || '';
+            document.getElementById('modalBubbleContent').innerHTML = bubble.content || '';
+            document.getElementById('noBubbleCheckbox').checked = bubble.noBubble || false;
+            
+            // Select current color
+            document.querySelectorAll('.color-dot-modal').forEach(dot => {
+                dot.classList.remove('selected');
+                if (bubble.color && dot.classList.contains(bubble.color)) {
+                    dot.classList.add('selected');
+                }
+            });
+            
+            document.getElementById('bubbleModal').classList.add('active');
+            document.getElementById('modalBubbleTitle').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('bubbleModal').classList.remove('active');
+            selectedBubbleColor = null;
+        }
+
+        // Page management
+        function addPage() {
+            const page = {
+                id: Date.now(),
+                name: `Mind Map ${pages.length + 1}`,
+                bubbles: [],
+                connections: [],
+                texts: [],
+                images: [],
+                isNested: false,
+                parentBubbleId: null
+            };
+            pages.push(page);
+            renderPages();
+            switchToPage(page.id);
+        }
+
+        function deletePage(pageId) {
+            // Prevent deleting the last page
+            if (pages.length <= 1) {
+                alert('Cannot delete the last mind map');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this mind map? This cannot be undone.')) {
+                // Also delete any nested pages
+                const nestedPages = pages.filter(p => p.parentPageId === pageId);
+                nestedPages.forEach(nested => {
+                    pages = pages.filter(p => p.id !== nested.id);
+                });
+                
+                // Delete the page itself
+                pages = pages.filter(p => p.id !== pageId);
+                
+                // Switch to first available page if current was deleted
+                if (currentPageId === pageId) {
+                    currentPageId = pages[0].id;
+                    loadCanvas();
+                }
+                
+                renderPages();
+                savePage();
+            }
+        }
+
+        function renderPages() {
+            const pagesList = document.getElementById('pagesList');
+            
+            // Separate main pages and nested pages
+            const mainPages = pages.filter(p => !p.isNested);
+            
+            let html = '';
+            mainPages.forEach(page => {
+                const activeClass = page.id === currentPageId ? 'active' : '';
+                html += `
+                    <div class="page-item ${activeClass}" onclick="switchToPage(${page.id})">
+                        <span class="page-name" id="pageName${page.id}">${page.name}</span>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="edit-btn" onclick="event.stopPropagation(); editPageName(${page.id})" title="Rename">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            ${mainPages.length > 1 ? `<button class="edit-btn delete-btn" onclick="event.stopPropagation(); deletePage(${page.id})" title="Delete">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Add nested pages under their parent
+                const nestedPages = pages.filter(p => p.parentPageId === page.id);
+                nestedPages.forEach(nested => {
+                    const nestedActiveClass = nested.id === currentPageId ? 'active' : '';
+                    html += `
+                        <div class="page-item nested ${nestedActiveClass}" onclick="switchToPage(${nested.id})">
+                            <span class="page-name" id="pageName${nested.id}">${nested.name}</span>
+                            <div style="display: flex; gap: 4px;">
+                                <button class="edit-btn" onclick="event.stopPropagation(); editPageName(${nested.id})" title="Rename">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                <button class="edit-btn delete-btn" onclick="event.stopPropagation(); deletePage(${nested.id})" title="Delete">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            
+            pagesList.innerHTML = html;
+        }
+
+        function editPageName(pageId) {
+            const page = pages.find(p => p.id === pageId);
+            const pageNameEl = document.getElementById(`pageName${pageId}`);
+            const currentName = page.name;
+            
+            pageNameEl.innerHTML = `<input type="text" class="page-name-input" value="${currentName}" onblur="savePageName(${pageId}, this.value)" onkeypress="if(event.key==='Enter') this.blur()">`;
+            pageNameEl.querySelector('input').focus();
+            pageNameEl.querySelector('input').select();
+        }
+
+        function savePageName(pageId, newName) {
+            const page = pages.find(p => p.id === pageId);
+            if (newName.trim()) {
+                page.name = newName.trim();
+            }
+            renderPages();
+            if (pageId === currentPageId) {
+                document.getElementById('currentPageTitle').textContent = page.name;
+            }
+        }
+
+        function switchToPage(pageId) {
+            currentPageId = pageId;
+            const page = pages.find(p => p.id === pageId);
+            document.getElementById('currentPageTitle').textContent = page.name;
+            renderPages();
+            loadCanvas();
+        }
+
+        function getCurrentPage() {
+            return pages.find(p => p.id === currentPageId);
+        }
+
+        // Canvas management
+        function loadCanvas() {
+            const page = getCurrentPage();
+            const canvasContent = document.getElementById('canvasContent');
+            
+            const bubblesHTML = page.bubbles.map(bubble => createBubbleHTML(bubble)).join('');
+            
+            canvasContent.innerHTML = `
+                <svg class="connections" id="connections">${renderConnections()}</svg>
+                ${bubblesHTML}
+            `;
+
+            // Reattach bubble events
+            page.bubbles.forEach(bubble => {
+                const bubbleEl = document.getElementById(`bubble${bubble.id}`);
+                if (bubbleEl) {
+                    // Main click handler - only for bubble body, not connection points
+                    bubbleEl.addEventListener('click', (e) => {
+                        // Don't handle clicks on connection points - they have their own handlers
+                        if (e.target.classList.contains('connection-point')) return;
+                        
+                        if (!isLineMode) {
+                            toggleBubble(bubble.id, e);
+                        }
+                    });
+                    
+                    // Drag handler - only when not in line mode
+                    bubbleEl.addEventListener('mousedown', (e) => {
+                        // Don't handle mousedown on connection points
+                        if (e.target.classList.contains('connection-point')) return;
+                        
+                        if (!isLineMode) {
+                            startDragBubble(bubble.id, e);
+                        }
+                    });
+                }
+            });
+        }
+
+        function createBubbleHTML(bubble) {
+            const typeClass = bubble.type ? `type-${bubble.type}` : '';
+            const colorClass = bubble.color ? `bubble-color-${bubble.color}` : '';
+            const noBubbleClass = bubble.noBubble ? 'no-bubble-style' : '';
+            let style = `left: ${bubble.x}px; top: ${bubble.y}px;`;
+            
+            // For no-bubble: show title, subtitle, and content all visible
+            if (bubble.noBubble) {
+                return `
+                    <div class="bubble ${typeClass} ${colorClass} ${noBubbleClass}" id="bubble${bubble.id}" style="${style}" oncontextmenu="showContextMenu(event, ${bubble.id}); return false;">
+                        <div class="bubble-title">${bubble.title || 'Untitled'}</div>
+                        ${bubble.subtitle ? `<div class="bubble-subtitle">${bubble.subtitle}</div>` : ''}
+                        ${bubble.content ? `<div class="bubble-content">${bubble.content}</div>` : ''}
+                    </div>
+                `;
+            }
+            
+            // Regular bubble: only show title and subtitle on canvas, with edit button
+            return `
+                <div class="bubble ${typeClass} ${colorClass}" id="bubble${bubble.id}" style="${style}" oncontextmenu="showContextMenu(event, ${bubble.id}); return false;">
+                    <div class="connection-point top" data-position="top" onmousedown="startConnection(event, ${bubble.id}, 'top')"></div>
+                    <div class="connection-point right" data-position="right" onmousedown="startConnection(event, ${bubble.id}, 'right')"></div>
+                    <div class="connection-point bottom" data-position="bottom" onmousedown="startConnection(event, ${bubble.id}, 'bottom')"></div>
+                    <div class="connection-point left" data-position="left" onmousedown="startConnection(event, ${bubble.id}, 'left')"></div>
+                    <div class="bubble-type-badge"></div>
+                    <div class="bubble-title">${bubble.title || 'Untitled'}</div>
+                    <div class="bubble-subtitle">${bubble.subtitle || ''}</div>
+                    <button class="bubble-edit-btn" onclick="event.stopPropagation(); openEditBubbleModal(${bubble.id})" title="Edit">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderConnections() {
+            const page = getCurrentPage();
+            
+            const svg = page.connections.map((conn, index) => {
+                const from = page.bubbles.find(b => b.id === conn.from);
+                const to = page.bubbles.find(b => b.id === conn.to);
+                if (!from || !to) return '';
+
+                const fromPos = conn.fromPosition || 'right';
+                const toPos = conn.toPosition || 'left';
+
+                const fromCoords = getConnectionPoint(from, fromPos, 'bubble');
+                const toCoords = getConnectionPoint(to, toPos, 'bubble');
+
+                return createElbowPath(fromCoords.x, fromCoords.y, toCoords.x, toCoords.y, index);
+            }).join('');
+            
+            return svg;
+        }
+
+        function getConnectionPoint(element, position, elementType) {
+            const elementId = `bubble${element.id}`;
+            const elementEl = document.getElementById(elementId);
+            if (!elementEl) {
+                // Fallback if element doesn't exist
+                const width = 160;
+                const height = 80;
+                const centerX = element.x + width/2;
+                const centerY = element.y + height/2;
+                
+                switch(position) {
+                    case 'top':
+                        return { x: centerX, y: element.y };
+                    case 'bottom':
+                        return { x: centerX, y: element.y + height };
+                    case 'left':
+                        return { x: element.x, y: centerY };
+                    case 'right':
+                        return { x: element.x + width, y: centerY };
+                    case 'center':
+                    default:
+                        return { x: centerX, y: centerY };
+                }
+            }
+            
+            const width = elementEl.offsetWidth;
+            const height = elementEl.offsetHeight;
+            
+            const baseX = element.x;
+            const baseY = element.y;
+            const centerX = baseX + width/2;
+            const centerY = baseY + height/2;
+
+            switch(position) {
+                case 'top':
+                    return { x: centerX, y: baseY };
+                case 'bottom':
+                    return { x: centerX, y: baseY + height };
+                case 'left':
+                    return { x: baseX, y: centerY };
+                case 'right':
+                    return { x: baseX + width, y: centerY };
+                case 'center':
+                default:
+                    return { x: centerX, y: centerY };
+            }
+        }
+
+        function getSmartConnectionPoints(fromBubble, toBubble) {
+            // Calculate centers
+            const fromCenter = getConnectionPoint(fromBubble, 'center', 'bubble');
+            const toCenter = getConnectionPoint(toBubble, 'center', 'bubble');
+            
+            // Calculate angle between bubbles
+            const dx = toCenter.x - fromCenter.x;
+            const dy = toCenter.y - fromCenter.y;
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            
+            let fromPos, toPos;
+            
+            // Determine best connection points based on relative position
+            if (Math.abs(angle) < 45) {
+                // To the right
+                fromPos = 'right';
+                toPos = 'left';
+            } else if (Math.abs(angle) > 135) {
+                // To the left
+                fromPos = 'left';
+                toPos = 'right';
+            } else if (angle > 0) {
+                // Below
+                fromPos = 'bottom';
+                toPos = 'top';
+            } else {
+                // Above
+                fromPos = 'top';
+                toPos = 'bottom';
+            }
+            
+            return {
+                from: getConnectionPoint(fromBubble, fromPos, 'bubble'),
+                to: getConnectionPoint(toBubble, toPos, 'bubble'),
+                fromPosition: fromPos,
+                toPosition: toPos
+            };
+        }
+
+        function createElbowPath(x1, y1, x2, y2, index) {
+            const dx = Math.abs(x2 - x1);
+            const dy = Math.abs(y2 - y1);
+            
+            // Use straight line if bubbles are roughly aligned horizontally or vertically
+            if (dy < 20 || dx < 20) {
+                return `<line class="connection-line" data-index="${index}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" onclick="selectConnection(${index})" oncontextmenu="deleteConnectionContextMenu(event, ${index})"/>`;
+            }
+            
+            // Otherwise use elbow path
+            const midX = (x1 + x2) / 2;
+            const path = `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+            return `<path class="connection-line" data-index="${index}" d="${path}" onclick="selectConnection(${index})" oncontextmenu="deleteConnectionContextMenu(event, ${index})"/>`;
+        }
+
+        function deleteConnectionContextMenu(event, index) {
+            if (!isLineMode) return false;
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            saveStateToHistory();
+            const page = getCurrentPage();
+            page.connections.splice(index, 1);
+            updateConnections();
+            savePage();
+            
+            return false;
+        }
+
+        function selectConnection(index) {
+            selectedConnectionIndex = index;
+            const lines = document.querySelectorAll('.connection-line');
+            lines.forEach((line, i) => {
+                if (i === index) {
+                    line.classList.add('selected');
+                } else {
+                    line.classList.remove('selected');
+                }
+            });
+        }
+
+        function showConnectionContextMenu(event, index) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            selectedConnectionIndex = index;
+            const menu = document.getElementById('connectionContextMenu');
+            menu.style.left = event.clientX + 'px';
+            menu.style.top = event.clientY + 'px';
+            menu.classList.add('active');
+        }
+
+        function connectionContextAction(action) {
+            const page = getCurrentPage();
+            const conn = page.connections[selectedConnectionIndex];
+            
+            if (!conn) return;
+            
+            switch(action) {
+                case 'editLabel':
+                    const label = prompt('Enter connection label:', conn.label || '');
+                    if (label !== null) {
+                        conn.label = label;
+                        updateConnections();
+                    }
+                    break;
+                    
+                case 'delete':
+                    page.connections.splice(selectedConnectionIndex, 1);
+                    updateConnections();
+                    break;
+            }
+            
+            hideConnectionContextMenu();
+        }
+
+        function hideConnectionContextMenu() {
+            document.getElementById('connectionContextMenu').classList.remove('active');
+        }
+
+        function formatModalText(type) {
+            const content = document.getElementById('modalBubbleContent');
+            
+            // Use execCommand for contenteditable
+            document.execCommand(type, false, null);
+            
+            // Keep focus on the content area
+            content.focus();
+        }
+
+        function parseMarkdownToHTML(text) {
+            if (!text) return '';
+            
+            // For contenteditable, just return the HTML as-is since it's already formatted
+            return text;
+        }
+
+        function convertHTMLToMarkdown(html) {
+            if (!html) return '';
+            
+            // For contenteditable, just return the HTML as-is for editing
+            return html;
+        }
+
+        // Bubble management
+        function toggleNoBubble() {
+            const checkbox = document.getElementById('noBubbleCheckbox');
+            const isNoBubble = checkbox.checked;
+            
+            // Store the state in a global variable for use when submitting
+            window.currentBubbleNoBubble = isNoBubble;
+        }
+
+        function submitBubbleModal() {
+            const title = document.getElementById('modalBubbleTitle').value.trim();
+            const subtitle = document.getElementById('modalBubbleSubtitle').value.trim();
+            const contentHTML = document.getElementById('modalBubbleContent').innerHTML.trim();
+            const noBubble = document.getElementById('noBubbleCheckbox').checked;
+            
+            if (!title) {
+                alert('Please enter a title');
+                return;
+            }
+            
+            // Save state before making changes
+            saveStateToHistory();
+            
+            const page = getCurrentPage();
+            
+            if (modalMode === 'create') {
+                bubbleIdCounter++;
+                
+                const bubble = {
+                    id: bubbleIdCounter,
+                    x: 100 + Math.random() * 300,
+                    y: 100 + Math.random() * 300,
+                    title: title,
+                    subtitle: subtitle,
+                    content: contentHTML,
+                    type: 'text',
+                    color: selectedBubbleColor,
+                    noBubble: noBubble
+                };
+
+                page.bubbles.push(bubble);
+            } else if (modalMode === 'edit') {
+                const bubble = page.bubbles.find(b => b.id === editingBubbleId);
+                if (bubble) {
+                    bubble.title = title;
+                    bubble.subtitle = subtitle;
+                    bubble.content = contentHTML;
+                    bubble.color = selectedBubbleColor;
+                    bubble.noBubble = noBubble;
+                }
+            }
+            
+            closeModal();
+            loadCanvas();
+            savePage(); // Auto-save after changes
+        }
+
+        function updateBubbleText(id, field, text) {
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === id);
+            if (bubble) {
+                bubble[field] = text;
+            }
+        }
+
+        function formatText(event, command) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.execCommand(command, false, null);
+        }
+
+        function toggleBubble(id, event) {
+            // Don't toggle in line mode
+            if (isLineMode) return;
+            
+            // Don't toggle if we just finished dragging
+            if (isDraggingBubble) return;
+            
+            // Require quick click (less than 200ms) and minimal movement (less than 5px)
+            const clickDuration = Date.now() - bubbleMouseDownTime;
+            const moveX = Math.abs(event.clientX - bubbleClickStartX);
+            const moveY = Math.abs(event.clientY - bubbleClickStartY);
+            
+            if (clickDuration > 200 || moveX > 5 || moveY > 5) {
+                return;
+            }
+            
+            if (event.target.closest('.bubble').classList.contains('dragging')) return;
+            if (event.target.classList.contains('connection-point')) return;
+            if (event.target.classList.contains('bubble-edit-btn')) return;
+            if (event.target.closest('.bubble-edit-btn')) return;
+            
+            event.stopPropagation();
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === id);
+            const bubbleEl = document.getElementById(`bubble${id}`);
+            
+            // Don't toggle no-bubble items - they already show everything
+            if (bubble.noBubble) return;
+            
+            // If bubble is a flowchart type and not expanded, navigate to it
+            if (bubble.type === 'flowchart' && !bubbleEl.classList.contains('expanded')) {
+                navigateToFlowchart(id);
+                return;
+            }
+            
+            bubbleEl.classList.toggle('expanded');
+        }
+
+        // Line Mode Management
+        function toggleLineMode() {
+            isLineMode = !isLineMode;
+            const btn = document.getElementById('lineModeBtn');
+            
+            if (isLineMode) {
+                btn.classList.add('active');
+                document.body.classList.add('line-mode-active');
+            } else {
+                btn.classList.remove('active');
+                document.body.classList.remove('line-mode-active');
+                document.body.classList.remove('connecting');
+                
+                // Cancel any ongoing connection
+                if (isConnecting) {
+                    isConnecting = false;
+                    connectionStart = null;
+                    document.body.style.cursor = '';
+                    document.getElementById('canvas').classList.remove('connecting');
+                }
+            }
+        }
+
+        // Text bubble functions
+        // Context menu
+        function showContextMenu(event, bubbleId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            contextMenuTarget = bubbleId;
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = event.clientX + 'px';
+            menu.style.top = event.clientY + 'px';
+            menu.classList.add('active');
+        }
+
+        function hideContextMenu() {
+            const menu = document.getElementById('contextMenu');
+            menu.classList.remove('active');
+        }
+
+        function contextAction(action) {
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === contextMenuTarget);
+            
+            switch(action) {
+                case 'edit':
+                    openEditBubbleModal(contextMenuTarget);
+                    break;
+                    
+                case 'createNested':
+                    createNestedMindmap(contextMenuTarget);
+                    break;
+                    
+                case 'delete':
+                    saveStateToHistory();
+                    page.bubbles = page.bubbles.filter(b => b.id !== contextMenuTarget);
+                    page.connections = page.connections.filter(
+                        conn => conn.from !== contextMenuTarget && conn.to !== contextMenuTarget
+                    );
+                    loadCanvas();
+                    break;
+            }
+            
+            hideContextMenu();
+        }
+
+        function createNestedMindmap(bubbleId) {
+            const bubble = getCurrentPage().bubbles.find(b => b.id === bubbleId);
+            if (!bubble) return;
+            
+            // Check if nested page already exists
+            let nestedPage = pages.find(p => p.parentBubbleId === bubbleId);
+            
+            if (!nestedPage) {
+                nestedPage = {
+                    id: Date.now(),
+                    name: `${bubble.title} (Nested)`,
+                    bubbles: [],
+                    connections: [],
+                    texts: [],
+                    images: [],
+                    isNested: true,
+                    parentBubbleId: bubbleId,
+                    parentPageId: currentPageId
+                };
+                pages.push(nestedPage);
+                renderPages();
+            }
+            
+            switchToPage(nestedPage.id);
+        }
+
+        // Connection creation
+        function startConnection(event, bubbleId, position) {
+            if (!isLineMode) return;
+            
+            event.stopPropagation();
+            event.preventDefault();
+            
+            if (!isConnecting) {
+                // Start new connection
+                isConnecting = true;
+                connectionStart = { bubbleId, position, type: 'bubble' };
+                document.body.style.cursor = 'crosshair';
+                document.body.classList.add('connecting');
+                document.getElementById('canvas').classList.add('connecting');
+            } else {
+                // Complete connection to this point
+                completeConnection(bubbleId, position, 'bubble');
+            }
+        }
+
+        function startConnectionMode(bubbleId) {
+            if (!isLineMode) return; // Only allow in line mode
+            
+            isConnecting = true;
+            connectionStart = { bubbleId, position: 'right' };
+            document.body.style.cursor = 'crosshair';
+            document.getElementById('canvas').classList.add('connecting');
+        }
+
+        function completeConnection(targetBubbleId, targetPosition, targetType) {
+            if (!isConnecting || !connectionStart) return;
+            
+            const page = getCurrentPage();
+            
+            // Don't connect to self
+            if (connectionStart.bubbleId === targetBubbleId) {
+                isConnecting = false;
+                connectionStart = null;
+                document.body.style.cursor = '';
+                document.body.classList.remove('connecting');
+                document.getElementById('canvas').classList.remove('connecting');
+                return;
+            }
+            
+            // Check if connection already exists
+            const exists = page.connections.some(
+                c => (c.from === connectionStart.bubbleId && c.to === targetBubbleId) ||
+                     (c.to === connectionStart.bubbleId && c.from === targetBubbleId)
+            );
+            
+            if (exists) {
+                isConnecting = false;
+                connectionStart = null;
+                document.body.style.cursor = '';
+                document.body.classList.remove('connecting');
+                document.getElementById('canvas').classList.remove('connecting');
+                return;
+            }
+            
+            saveStateToHistory();
+            
+            page.connections.push({
+                from: connectionStart.bubbleId,
+                to: targetBubbleId,
+                fromPosition: connectionStart.position,
+                toPosition: targetPosition,
+                lineType: defaultLineType,
+                fromType: connectionStart.type || 'bubble',
+                toType: targetType || 'bubble'
+            });
+            
+            isConnecting = false;
+            connectionStart = null;
+            document.body.style.cursor = '';
+            document.body.classList.remove('connecting');
+            document.getElementById('canvas').classList.remove('connecting');
+            updateConnections();
+        }
+
+        // Flowchart navigation
+        function navigateToFlowchart(bubbleId) {
+            const bubble = getCurrentPage().bubbles.find(b => b.id === bubbleId);
+            if (!bubble) return;
+            
+            // Create a new page for this flowchart if it doesn't exist
+            let flowchartPage = pages.find(p => p.parentBubbleId === bubbleId);
+            
+            if (!flowchartPage) {
+                flowchartPage = {
+                    id: Date.now(),
+                    name: bubble.title + ' (Flowchart)',
+                    bubbles: [],
+                    connections: [],
+                    parentBubbleId: bubbleId,
+                    parentPageId: currentPageId
+                };
+                pages.push(flowchartPage);
+            }
+            
+            switchToPage(flowchartPage.id);
+        }
+
+        // Sidebar toggle
+        // (removed - sidebar is now always visible)
+
+        // Save functionality
+        function savePage() {
+            const saveBtn = document.getElementById('saveBtn');
+            const data = {
+                pages: pages,
+                savedAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('mindmap_data', JSON.stringify(data));
+            
+            // Visual feedback without changing icon
+            saveBtn.classList.add('saved');
+            setTimeout(() => {
+                saveBtn.classList.remove('saved');
+            }, 2000);
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(() => {
+            if (pages.length > 0) {
+                const data = {
+                    pages: pages,
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('mindmap_data', JSON.stringify(data));
+            }
+        }, 30000);
+
+        // Load from localStorage on init
+        function loadFromStorage() {
+            const saved = localStorage.getItem('mindmap_data');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.pages && data.pages.length > 0) {
+                        pages = data.pages;
+                        
+                        // Ensure all pages have texts and images arrays (backward compatibility)
+                        pages.forEach(page => {
+                            if (!page.texts) page.texts = [];
+                            if (!page.images) page.images = [];
+                        });
+                        
+                        // Find the highest bubble ID to continue from
+                        pages.forEach(page => {
+                            page.bubbles.forEach(bubble => {
+                                if (bubble.id > bubbleIdCounter) {
+                                    bubbleIdCounter = bubble.id;
+                                }
+                            });
+                        });
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('Failed to load saved data:', e);
+                }
+            }
+            return false;
+        }
+
+        // Export to PDF
+        // Bubble dragging
+        let draggedBubbleId = null;
+        let bubbleStartX = 0;
+        let bubbleStartY = 0;
+        let bubbleOffsetX = 0;
+        let bubbleOffsetY = 0;
+        let isDraggingBubble = false;
+        let bubbleMouseDownTime = 0;
+        let bubbleClickStartX = 0;
+        let bubbleClickStartY = 0;
+
+        function startDragBubble(id, event) {
+            // Don't start drag if clicking on buttons or connection points
+            if (event.target.classList.contains('bubble-edit-btn')) return;
+            if (event.target.closest('.bubble-edit-btn')) return;
+            if (event.target.classList.contains('connection-point')) return;
+            if (event.button !== 0) return;
+            
+            draggedBubbleId = id;
+            isDraggingBubble = false;
+            bubbleMouseDownTime = Date.now();
+            bubbleClickStartX = event.clientX;
+            bubbleClickStartY = event.clientY;
+            
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === id);
+            const bubbleEl = document.getElementById(`bubble${id}`);
+            
+            bubbleStartX = event.clientX;
+            bubbleStartY = event.clientY;
+            bubbleOffsetX = bubble.x;
+            bubbleOffsetY = bubble.y;
+            
+            bubbleEl.style.zIndex = 100;
+            
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        function moveBubble(event) {
+            if (!draggedBubbleId) return;
+            
+            const page = getCurrentPage();
+            const bubble = page.bubbles.find(b => b.id === draggedBubbleId);
+            const bubbleEl = document.getElementById(`bubble${draggedBubbleId}`);
+            
+            const dx = (event.clientX - bubbleStartX) / scale;
+            const dy = (event.clientY - bubbleStartY) / scale;
+            
+            // Only mark as dragging if moved more than 8px (increased from 5px)
+            if (!isDraggingBubble && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+                isDraggingBubble = true;
+                bubbleEl.classList.add('dragging');
+            }
+            
+            if (isDraggingBubble) {
+                bubble.x = bubbleOffsetX + dx;
+                bubble.y = bubbleOffsetY + dy;
+                
+                bubbleEl.style.left = bubble.x + 'px';
+                bubbleEl.style.top = bubble.y + 'px';
+                
+                updateConnections();
+            }
+        }
+
+        function endDragBubble() {
+            if (draggedBubbleId) {
+                const page = getCurrentPage();
+                const bubble = page.bubbles.find(b => b.id === draggedBubbleId);
+                
+                if (bubble && isDraggingBubble) {
+                    // Snap to grid (20px intervals)
+                    const snapSize = 20;
+                    bubble.x = Math.round(bubble.x / snapSize) * snapSize;
+                    bubble.y = Math.round(bubble.y / snapSize) * snapSize;
+                    
+                    // Update visual position
+                    const bubbleEl = document.getElementById(`bubble${draggedBubbleId}`);
+                    bubbleEl.style.left = bubble.x + 'px';
+                    bubbleEl.style.top = bubble.y + 'px';
+                    
+                    updateConnections();
+                }
+                
+                const bubbleEl = document.getElementById(`bubble${draggedBubbleId}`);
+                bubbleEl.classList.remove('dragging');
+                bubbleEl.style.zIndex = '';
+                draggedBubbleId = null;
+                isDraggingBubble = false;
+            }
+        }
+
+        // Text bubble dragging
+        function drag(e) {
+            moveCanvas(e);
+            moveBubble(e);
+        }
+
+        function endDrag() {
+            endDragCanvas();
+            endDragBubble();
+        }
+
+        function updateConnections() {
+            const svg = document.getElementById('connections');
+            svg.innerHTML = renderConnections();
+        }
+
+        // Touch event handlers for mobile
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+        let touchStartTime = 0;
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+                touchStartTime = Date.now();
+                
+                // Check if touching a bubble
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                const bubble = target?.closest('.bubble');
+                
+                if (bubble && !isLineMode) {
+                    const bubbleId = parseInt(bubble.id.replace('bubble', ''));
+                    const syntheticEvent = {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        target: target,
+                        button: 0,
+                        preventDefault: () => e.preventDefault(),
+                        stopPropagation: () => e.stopPropagation()
+                    };
+                    startDragBubble(bubbleId, syntheticEvent);
+                } else {
+                    // Start canvas drag
+                    startDrag({ 
+                        clientX: touch.clientX, 
+                        clientY: touch.clientY,
+                        target: target
+                    });
+                }
+            } else if (e.touches.length === 2) {
+                // Pinch to zoom - store initial distance
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                lastPinchDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+            }
+        }
+
+        let lastPinchDistance = 0;
+
+        function handleTouchMove(e) {
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                
+                if (draggedBubbleId) {
+                    moveBubble({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                } else if (isDragging) {
+                    drag({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                }
+                
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+            } else if (e.touches.length === 2) {
+                // Pinch to zoom
+                e.preventDefault();
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const distance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                
+                if (lastPinchDistance > 0) {
+                    const delta = distance / lastPinchDistance;
+                    scale *= delta;
+                    scale = Math.max(0.3, Math.min(2, scale));
+                    updateCanvasTransform();
+                }
+                
+                lastPinchDistance = distance;
+            }
+        }
+
+        function handleTouchEnd(e) {
+            const touchDuration = Date.now() - touchStartTime;
+            
+            if (draggedBubbleId) {
+                endDragBubble();
+            } else {
+                endDrag();
+            }
+            
+            lastPinchDistance = 0;
+            
+            // Handle tap (quick touch without much movement)
+            if (touchDuration < 300 && e.changedTouches.length === 1) {
+                const touch = e.changedTouches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                const bubble = target?.closest('.bubble');
+                
+                if (bubble && !isLineMode && !draggedBubbleId) {
+                    const bubbleId = parseInt(bubble.id.replace('bubble', ''));
+                    toggleBubble(bubbleId, {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY,
+                        target: target,
+                        stopPropagation: () => {}
+                    });
+                }
+            }
+        }
+
+        // Canvas pan and zoom
+        function setupCanvasEvents() {
+            const canvas = document.getElementById('canvas');
+            
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            canvas.addEventListener('wheel', handleZoom, { passive: false });
+            
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd, { passive: false });
+            
+            // Hide context menu on click outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.context-menu')) {
+                    hideContextMenu();
+                }
+            });
+            
+            // Close modal on overlay click
+            document.getElementById('bubbleModal').addEventListener('click', (e) => {
+                if (e.target.id === 'bubbleModal') {
+                    closeModal();
+                }
+            });
+            
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('bubbleModal').classList.contains('active')) {
+                        closeModal();
+                    } else if (isConnecting && isLineMode) {
+                        isConnecting = false;
+                        connectionStart = null;
+                        document.body.style.cursor = '';
+                        document.getElementById('canvas').classList.remove('connecting');
+                    }
+                }
+            });
+            
+            // Delete selected connection with Delete/Backspace key
+            document.addEventListener('keydown', (e) => {
+                if (!isLineMode) return;
+                
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedConnectionIndex !== null) {
+                    const page = getCurrentPage();
+                    page.connections.splice(selectedConnectionIndex, 1);
+                    selectedConnectionIndex = null;
+                    updateConnections();
+                }
+            });
+            
+            // Keyboard shortcuts for formatting in modal
+            document.addEventListener('keydown', (e) => {
+                const content = document.getElementById('modalBubbleContent');
+                if (!content || document.activeElement !== content) return;
+                
+                if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+                    e.preventDefault();
+                    formatModalText('bold');
+                } else if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
+                    e.preventDefault();
+                    formatModalText('italic');
+                }
+            });
+        }
+
+        function startDrag(event) {
+            if (event.target.closest('.bubble') || draggedBubbleId) return;
+            
+            isDragging = true;
+            startX = event.clientX - translateX;
+            startY = event.clientY - translateY;
+            document.getElementById('canvas').classList.add('grabbing');
+        }
+
+        function drag(event) {
+            if (draggedBubbleId) {
+                moveBubble(event);
+                return;
+            }
+            
+            if (!isDragging) return;
+            
+            translateX = event.clientX - startX;
+            translateY = event.clientY - startY;
+            updateCanvasTransform();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            document.getElementById('canvas').classList.remove('grabbing');
+            endDragBubble();
+        }
+
+        function handleZoom(event) {
+            event.preventDefault();
+            const delta = event.deltaY > 0 ? 0.9 : 1.1;
+            scale *= delta;
+            scale = Math.max(0.3, Math.min(2, scale));
+            updateCanvasTransform();
+        }
+
+        function zoomIn() {
+            scale *= 1.2;
+            scale = Math.min(2, scale);
+            updateCanvasTransform();
+        }
+
+        function zoomOut() {
+            scale *= 0.8;
+            scale = Math.max(0.3, scale);
+            updateCanvasTransform();
+        }
+
+        function resetView() {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateCanvasTransform();
+        }
+
+        function updateCanvasTransform() {
+            const canvasContent = document.getElementById('canvasContent');
+            canvasContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        }
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
